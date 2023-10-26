@@ -18,6 +18,7 @@
 
             StructuredBuffer<int> _Triangles;
             StructuredBuffer<float3> _Positions;
+            StructuredBuffer<float3> _VertexPositions;
             uniform uint _StartIndex;
             uniform uint _BaseVertexIndex;
             uniform float4x4 _ObjectToWorld;
@@ -26,11 +27,12 @@
             v2f vert(uint vertexID: SV_VertexID, uint instanceID : SV_InstanceID)
             {
                 v2f o;
-                float3 pos = _Positions[_Triangles[vertexID + _StartIndex] + _BaseVertexIndex];
+                float3 pos = _VertexPositions[_Triangles[vertexID + _StartIndex] + _BaseVertexIndex] * 1.1f;
                 // float4 wpos = mul(_ObjectToWorld, float4(pos + float3(instanceID, instanceID, 0), 1.0f));
                 float4 wpos = mul(_ObjectToWorld, float4(pos + _Positions[instanceID], 1.0f));
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
-                o.color = float4(instanceID / _NumInstances, 0.0f, 0.0f, 0.0f);
+                // o.color = float4(instanceID / _NumInstances, 0.0f, 0.0f, 0.0f);
+                o.color = wpos / 100.f;
                 return o;
             }
 
