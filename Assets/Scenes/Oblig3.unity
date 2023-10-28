@@ -209,8 +209,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1041565142}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.088247456, y: 0.88172525, z: -0.18269302, w: 0.42590645}
+  m_LocalPosition: {x: -402.3736, y: 267.52777, z: 59.612663}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -423,7 +423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointCloudData: {fileID: 0}
-  _mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  _mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _material: {fileID: 2100000, guid: c2f71bcb838d9324080e91fcc64165ca, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

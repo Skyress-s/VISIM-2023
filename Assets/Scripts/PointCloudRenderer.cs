@@ -27,8 +27,7 @@ public class PointCloudRenderer : MonoBehaviour {
         return list.Length;
     }
 
-    [ContextMenu("CovertToModifiedFile")]
-    private void ConvertToModifiedFile() {
+    public void ConvertToModifiedFile() {
 
         points = new();
         int numLines = 0;
