@@ -101,7 +101,7 @@ public class PointCloudRenderer : MonoBehaviour {
     private List<Vector3> points = new();
     void Start()
     {
-        points = new();
+        points = new List<Vector3>();
         // int a = 0;
         
         using (StreamReader inputFile = new StreamReader(basePath + modifiedFileName)) {
