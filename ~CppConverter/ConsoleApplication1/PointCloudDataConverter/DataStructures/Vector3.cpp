@@ -3,7 +3,10 @@
 Vector3::Vector3() {
 }
 
-Vector3::Vector3(float x, float y, float z) {
+Vector3::Vector3(const float& x, const float& y, const float& z) {
+    xyz[0] = x;
+    xyz[1] = y;
+    xyz[2] = z;
 }
 // file
 std::ostream& operator<<(std::ostream& os, const Vector3& v) {

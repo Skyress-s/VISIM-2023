@@ -35,7 +35,8 @@ public class PointCloudRenderer : MonoBehaviour {
         // var a = ReadAllLinesAsync(path + "test.txt", Encoding.UTF8).GetAwaiter().GetResult();
         // return;
         Vector3? first = null;
-        using (StreamReader inputFile = new StreamReader(basePath + originalFileName)) {
+        // using (StreamReader inputFile = new StreamReader(basePath + originalFileName)) {
+        using (StreamReader inputFile = new StreamReader(AssetDatabase.GetAssetPath(pointCloudData))) {
             while (!inputFile.EndOfStream) {
                 var strings = inputFile.ReadLine().Split(' ');
                 if (strings.Length != 3) {
@@ -43,14 +44,13 @@ public class PointCloudRenderer : MonoBehaviour {
                 }
                 
                 a++;
-                if (a != 500)
+                if (a != 200)
                     continue;
 
                 numLines++;
                 a = 0;
 
                 var p = new Vector3(float.Parse(strings[0]), float.Parse(strings[2]), float.Parse(strings[1]));
-                Debug.Log(p);
                 // p /= 100000f;
                 if (first == null) {
                     first = p;
@@ -103,14 +103,19 @@ public class PointCloudRenderer : MonoBehaviour {
         points = new List<Vector3>();
         // int a = 0;
         
-        using (StreamReader inputFile = new StreamReader(basePath + modifiedFileName)) {
+        using (StreamReader inputFile = new StreamReader(AssetDatabase.GetAssetPath(pointCloudData))) {
+            int skip = 0;
             while (!inputFile.EndOfStream) {
                 var strings = inputFile.ReadLine().Split(' ');
                 if (strings.Length != 3) 
                     continue;
-               
+                skip++;
+                if (skip > 10) {
+                    continue;
+                }
+
+                skip = 0;
                 var p = new Vector3(float.Parse(strings[0]), float.Parse(strings[1]), float.Parse(strings[2]));
-                Debug.Log(p);
                 points.Add(p);
             }
         }

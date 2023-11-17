@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Range3.h"
 #include "Vector3.h"
 
 class Triangulator {
@@ -11,14 +12,14 @@ public:
 
 private:
     bool hasCalculatedBounds = false;
-    float xMin = std::numeric_limits<float>::max(), yMin = std::numeric_limits<float>::max();
-    float xMax = std::numeric_limits<float>::lowest(), yMax = std::numeric_limits<float>::lowest();
-    float lengthX;
-    float lengthY;
+    Range3 bounds;
+    // float lengthX;
+    // float lengthY;
     float stepLengthX;
     float stepLengthy;
     int numClouds;
     int partitions;
+
 public:
     Triangulator(std::vector<Vector3>& points, int partitions) {
         // Calculate some starting values
@@ -26,76 +27,115 @@ public:
         _pointCloud = points;
         CalculateBounds();
 
-        lengthX = xMax - xMin;
-        lengthY = yMax - yMin;
-        stepLengthX = lengthX / static_cast<float>(partitions);
-        stepLengthy = lengthY / static_cast<float>(partitions);
+        // lengthX = xMax - xMin;
+        // lengthX = bounds.LengthX()
+        // lengthY = yMax - yMin;
+        // lengthY = 
+        stepLengthX = bounds.LengthX() / static_cast<float>(partitions);
+        stepLengthy = bounds.LengthY() / static_cast<float>(partitions);
         numClouds = partitions * partitions;
         this->partitions = partitions;
+    }
+
+    void CenterPointCloud() {
+        // Getting offset vector
+        // const Vector3 offset = Vector3(bounds.LengthX(), bounds.LengthY(), bounds.LengthZ()) / 2.f;
+        const Vector3 offset = _pointCloud[0];
+
+        for (Vector3& point : _pointCloud) {
+            point -= offset;
+            // point *= 0.05f;
+        }
     }
 
     // 7 8 9
     // 4 5 6
     // 1 2 3    ^y ->x
     // pointClouds are written [x][y] index
+
     void Triangulate() {
-        // Seperate elements into lesser clouds to be combined
+        /*
         std::vector<std::vector<std::vector<Vector3>>> pointClouds = SplitIntoSmallerClouds();
-        return;
-        // for (auto pointCloud : pointClouds) {
-        //     Vector3 average;
-        //     for (auto point : pointCloud) {
-        //         average += point / (float)_pointCloud.size();
-        //     }
-        // }
-        //
-        // std::cout << "Points in each file" << std::endl;
-        // for (auto pointCloud : pointClouds) {
-        //     std::cout << pointCloud.size() << " ";
-        // }
+#pragma omp parallel for
+        for (int i = 0; i < pointClouds.size(); ++i) {
+            std::cout << "Im : " << i << std::endl;
+            for (int j = 0; j < pointClouds[i].size(); ++j) {
+                std::cout << pointClouds[i][j].size() << std::endl;
+            }
+        }
+    */
+
+        CalculateBounds();
+        std::vector<std::vector<Vector3>> pointClouds;
+        std::vector<float> heights = std::vector<float>(partitions * partitions);
+        SplitIntoSmallerClouds(pointClouds);
+#pragma omp parallel for collapse(2) // Dont reallocate ANYTHING, dont emplace back, dont push to shered memory
+        for (int i = 0; i < pointClouds.size(); ++i) {
+            
+            const float size = pointClouds[i].size();
+            float average;
+            
+            for (int j = 0; j < pointClouds[i].size(); ++j) {
+                average = pointClouds[i][j].y() / size;
+            }
+            heights[i] = average;
+        }
+
+        for (auto height : heights) {
+            std::cout << height << std::endl;
+        }
     }
 
 private:
     void CalculateBounds() {
-        if (hasCalculatedBounds) {
-            return;
-        }
+        // if (hasCalculatedBounds)
+        // return;
+
+        float xMin = std::numeric_limits<float>::max(),
+              yMin = std::numeric_limits<float>::max(),
+              zMin = std::numeric_limits<float>::max();
+
+        float xMax = std::numeric_limits<float>::lowest(),
+              yMax = std::numeric_limits<float>::lowest(),
+              zMax = std::numeric_limits<float>::lowest();
         hasCalculatedBounds = true;
         for (auto point : _pointCloud) {
-            
-            yMax = std::max(yMax, point.y());
             xMax = std::max(xMax, point.x());
+            yMax = std::max(yMax, point.y());
+            zMax = std::max(zMax, point.z());
 
-            yMin = std::min(yMin, point.y());
             xMin = std::min(xMin, point.x());
-        // std::cout << "yMax " << yMax << " yMin " << yMin << " xMax " << xMax << " xMin " << xMin << std::endl;
+            yMin = std::min(yMin, point.y());
+            zMin = std::min(zMin, point.z());
+            // std::cout << "yMax " << yMax << " yMin " << yMin << " xMax " << xMax << " xMin " << xMin << std::endl;
         }
+
+        bounds = Range3(xMin, yMin, zMin, xMax, yMax, zMax);
     }
 
-    std::vector<std::vector<std::vector<Vector3>>>& SplitIntoSmallerClouds() {
-        std::vector<std::vector<std::vector<Vector3>>> pointClouds(partitions, std::vector<std::vector<Vector3>>(partitions, std::vector<Vector3>(2*2)));
+    void SplitIntoSmallerClouds(std::vector<std::vector<Vector3>>& pointClouds) {
+        // void SplitIntoSmallerClouds(std::vector<std::vector<std::vector<Vector3>>>& pointClouds) {
+        // pointClouds = std::vector<std::vector<std::vector<Vector3>>>(
+        //     partitions, std::vector<std::vector<Vector3>>(partitions, std::vector<Vector3>(2 * 2)));
 
+        pointClouds = std::vector<std::vector<Vector3>>(partitions * partitions, std::vector<Vector3>(2));
         for (auto point : _pointCloud) {
-            float relavtiveX = point.x() - xMin;
-            float relavtiveY = point.y() - yMin;
-            float fIndexX = (relavtiveX / lengthX) * static_cast<float>(partitions);
-            float fIndexY = (relavtiveY / lengthY) * static_cast<float>(partitions);
-            
+            float relavtiveX = point.x() - bounds._min.x();
+            float relavtiveY = point.y() - bounds._min.y();
+            float fIndexX = (relavtiveX / bounds.LengthX()) * static_cast<float>(partitions);
+            float fIndexY = (relavtiveY / bounds.LengthY()) * static_cast<float>(partitions);
+
             int indexX = (int)fIndexX;
             indexX = std::max(0, indexX);
-            indexX = std::min(partitions-1, indexX);
+            indexX = std::min(partitions - 1, indexX);
             int indexY = (int)fIndexY;
             indexY = std::max(0, indexY);
-            indexY = std::min(partitions-1, indexY);
-            
-            
-            // std::cout << fIndexX << " " << fIndexY << std::endl;
-            pointClouds[indexX][indexY].push_back(point);
-            
-            
-        }
+            indexY = std::min(partitions - 1, indexY);
 
-        return pointClouds;
+            // std::cout << indexX << " | " << indexY << std::endl;
+            pointClouds[indexX + indexY * partitions].push_back(point);
+            // pointClouds[indexX][indexY].push_back(point);
+        }
     }
 
 public:

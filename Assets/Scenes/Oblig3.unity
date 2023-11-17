@@ -422,7 +422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf8257bcac8c7d4380375dc6d39df00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointCloudData: {fileID: 0}
+  pointCloudData: {fileID: 4900000, guid: 07f5c76a15da2a84d9e6919f2520305b, type: 3}
   _mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _material: {fileID: 2100000, guid: c2f71bcb838d9324080e91fcc64165ca, type: 2}
 --- !u!1660057539 &9223372036854775807

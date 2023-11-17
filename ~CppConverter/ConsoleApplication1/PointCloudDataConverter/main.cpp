@@ -17,27 +17,26 @@ void ReadInData(std::vector<Vector3>& outPoints) {
     }
     float x, y, z;
     Vector3 v;
-    // while (inputFile >> x >> y >> z) {
-    while (inputFile >> v) {
-        skip++;
-        // if (skip < 15000)
-        //     continue;
-        skip = 0.f;
+    while (inputFile >> x >> y >> z) {
         lines++;
-        // outPoints.emplace_back(Vector3(x,z,y));
-        outPoints.emplace_back(v);
+
+        // Emplace vs Push_back
+        // BAD -> outPoints.emplace_back(Vector3(x,z,y));
+        outPoints.emplace_back(x,z,y); // It calls the constructor for you in place. You only have to give the constructor args.
+        // std::cout << outPoints[outPoints.size() - 1] <<std::endl;
     }
     inputFile.close();
 }
 
-void WriteToPointCloud(const std::vector<Vector3>& points) {
-    std::ofstream outFile("output.txt");
+void WriteToPointCloud(const std::vector<Vector3>& points, const std::string& filename) {
+    std::ofstream outFile(filename);
     if (!outFile.is_open()) {
         std::cout << "File could not be opened or created!\n";
         return;
     }
     outFile << points.size();
     for (auto point : points) {
+        // std::cout << point << std::endl;
         outFile << "\n" << point;
     }
     outFile.close();
@@ -45,6 +44,8 @@ void WriteToPointCloud(const std::vector<Vector3>& points) {
 
 void TriangulateAndWriteToFile(std::vector<Vector3>& points) {
     Triangulator triangulator = Triangulator(points, 5);
+    triangulator.CenterPointCloud();
+    // WriteToPointCloud(triangulator._pointCloud, "output.txt");
     triangulator.Triangulate();
     
 }
@@ -56,9 +57,9 @@ int main(int argc, char* argv[]) {
     std::vector<Vector3> points{};
     ReadInData(points);
     std::cout << "Finished Reading File!" << std::endl;
-
-    WriteToPointCloud(points);
-
+    
+    // WriteToPointCloud(points);
+    
     std::cout << "Finished Writing File!" << std::endl;
 
     TriangulateAndWriteToFile(points);
