@@ -65,6 +65,8 @@ public:
         boundsDirty = true;
     }
 
+
+    // Filename "test.txt" will result in file : test.txt 
     template <typename T>
     void WriteToFile(const std::string filename, std::vector<T> items)
     {
@@ -86,6 +88,18 @@ public:
     // 1 2 3    ^y ->x
     // pointClouds are written [x][y] index
 
+    std::vector<Vector3> HeightIntoRegularGrid(std::vector<float> heights, const float& stepX, const float& stepZ)
+    {
+        std::vector<Vector3> trigPoints = std::vector<Vector3>();
+        
+        for (int i = 0; i < partitions * partitions; i++) {
+            Vector3 point = Vector3(stepX * static_cast<float>(i % partitions), heights[i],
+                                    stepZ * (float)static_cast<int>((float)i / (float)partitions));
+            trigPoints.push_back(point);
+        }
+        return trigPoints;
+    }
+
     void Triangulate()
     {
         CalculateBounds();
@@ -96,18 +110,6 @@ public:
         std::vector<std::vector<Vector3>> pointClouds;
         SplitIntoSmallerClouds(pointClouds);
 
-        /*
-        // Print Data of SplitClouds
-        for (int i = 0; i < pointClouds.size(); ++i) {
-            std::vector<Vector3> test = std::vector<Vector3>(0);
-            for (int j = 0; j < pointClouds[i].size(); ++j) {
-                test.push_back(pointClouds[i][j]);
-            }
-            WriteToFile("Test" + std::to_string(i) + ".txt", test);
-        }
-        return;
-        */
-
         // #pragma omp parallel for collapse(2) // Dont reallocate ANYTHING, dont emplace back, dont push to shered memory
         for (int i = 0; i < pointClouds.size(); ++i) {
             const float size = pointClouds[i].size();
@@ -117,7 +119,6 @@ public:
                 average += pointClouds[i][j].y() / size;
             }
             heights[i] = average;
-            // std::cout << heights[i] << std::endl;
         }
 
         // for (auto height : heights) {
@@ -125,14 +126,9 @@ public:
         // }
 
         // Create the points, with correct xyz coordinates
-        std::vector<Vector3> trigPoints = std::vector<Vector3>(partitions * partitions);
         const float stepX = (bounds.LengthX() - stepLengthX) / (partitions - 1);
         const float stepZ = (bounds.LengthZ() - stepLengthZ) / (partitions - 1);
-        for (int i = 0; i < partitions * partitions; i++) {
-            Vector3 point = Vector3(stepX * static_cast<float>(i % partitions), heights[i],
-                                    stepZ * (float)static_cast<int>((float)i / (float)partitions));
-            trigPoints.push_back(point);
-        }
+        std::vector<Vector3> trigPoints = HeightIntoRegularGrid(heights, stepX, stepZ);
 
         // center this regular grid
         const float xMin = 0;
@@ -146,14 +142,40 @@ public:
             point -= regularGridOffsetVector;
         }
 
-        // for (int i = 0; i < partitions; ++i) {
-        //     for (int j = 0; j < partitions; ++j) {
-        //             std::cout << heights[j + partitions * i] << " | ";
-        //     }
-        //     std::cout << std::endl;
-        // }
         WriteToFile("Vertices.txt", trigPoints);
+        // Calculate Triangle and neighbour info
 
+        const int pointPerSide = partitions;
+        const int quadsPerSide = partitions-1;
+        const int totalNumQuads = quadsPerSide * quadsPerSide;
+
+
+        std::vector<FIndicesAndNeighbour> indicesAndNeighbours{};
+        for (int i = 0; i < quadsPerSide - 1; ++i) {
+        // int i = 0;
+            for (int j = 0; j < quadsPerSide - 1; ++j) {
+                int SW = i * pointPerSide + j;
+                int SE = i * pointPerSide + j + 1;
+                int NW = (i+1) * pointPerSide + j;
+                int NE = (i+1) * pointPerSide + j + 1;
+
+                FIndicesAndNeighbour TriOne;
+                TriOne.indices[0] = SW;
+                TriOne.indices[1] = NE;
+                TriOne.indices[2] = SE;
+                FIndicesAndNeighbour TriTwo;
+                TriTwo.indices[0] = SW;
+                TriTwo.indices[1] = NW;
+                TriTwo.indices[2] = NE;
+                indicesAndNeighbours.push_back(TriOne);
+                indicesAndNeighbours.push_back(TriTwo);
+                std::cout << TriOne << std::endl;
+                std::cout << TriTwo << std::endl;
+                
+            }
+        }
+
+        WriteToFile("indicesAndNeighbours.txt", indicesAndNeighbours);
 
         // Write to structure
     }

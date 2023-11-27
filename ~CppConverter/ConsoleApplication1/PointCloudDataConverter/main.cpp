@@ -45,7 +45,7 @@ void WriteToPointCloud(const std::vector<Vector3>& points, const std::string& fi
 void TriangulateAndWriteToFile(std::vector<Vector3>& points) {
     Triangulator triangulator = Triangulator(points, 25);
     triangulator.CenterPointCloud();
-    triangulator.WriteToFile("PointCloud.txt", triangulator._pointCloud);
+    // triangulator.WriteToFile("PointCloud.txt", triangulator._pointCloud);
     triangulator.Triangulate();
     
 }

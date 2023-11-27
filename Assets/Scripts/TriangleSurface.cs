@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using KT;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class TriangleSurface : MonoBehaviour {
     [SerializeField] private TextAsset verticesData;
     [SerializeField] private TextAsset indicesData;
@@ -12,11 +14,11 @@ public class TriangleSurface : MonoBehaviour {
         List<int> indices = new();
         ReadData(ref vertices, ref indices);
 
-        for (int i = 0; i < indices.Count/3; i++) {
-            int temp = indices[i * 3 + 0];
-            indices[i * 3 + 0] = indices[i * 3 + 2];
-            indices[i * 3 + 2] = temp;
-        }
+        // for (int i = 0; i < indices.Count/3; i++) {
+            // int temp = indices[i * 3 + 0];
+            // indices[i * 3 + 0] = indices[i * 3 + 2];
+            // indices[i * 3 + 2] = temp;
+        // }
         
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -43,6 +45,7 @@ public class TriangleSurface : MonoBehaviour {
         return triangles;
     }
     private void OnDrawGizmos() {
+        return;
         List<CollisionTriangle> tris = GetTriangles();
         for (int i = 0; i < tris.Count; i++) {
             tris[i].DebugDraw(UnityEngine.Color.red);
@@ -52,11 +55,12 @@ public class TriangleSurface : MonoBehaviour {
     void ReadData(ref List<Vector3> verts, ref List<int> indices) {
         var vertStringData = verticesData.text.Split('\n');
         int numVerts = int.Parse(vertStringData[0]);
+        Debug.Log($"Num Verts {numVerts}");
         
         for (int i = 1; i < numVerts + 1; i++) {
             var compData = vertStringData[i].Split(' ');
-            verts.Add(new Vector3(float.Parse(compData[0]),float.Parse(compData[1])*10f, float.Parse(compData[2]) ));
-            verts[verts.Count - 1] *= 0.01f;
+            verts.Add(new Vector3(float.Parse(compData[0]),float.Parse(compData[1]), float.Parse(compData[2]) ));
+            // verts[verts.Count - 1] *= 0.01f;
         }
         
         var indicesStringData =indicesData.text.Split('\n');
