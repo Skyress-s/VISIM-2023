@@ -151,9 +151,11 @@ public:
 
 
         std::vector<FIndicesAndNeighbour> indicesAndNeighbours{};
-        for (int i = 0; i < quadsPerSide - 1; ++i) {
+        for (int i = 0; i < quadsPerSide ; ++i) {
         // int i = 0;
-            for (int j = 0; j < quadsPerSide - 1; ++j) {
+            for (int j = 0; j < quadsPerSide ; ++j) {
+                const int currentQuad = quadsPerSide * i + j;
+                
                 int SW = i * pointPerSide + j;
                 int SE = i * pointPerSide + j + 1;
                 int NW = (i+1) * pointPerSide + j;
@@ -161,16 +163,23 @@ public:
 
                 FIndicesAndNeighbour TriOne;
                 TriOne.indices[0] = SW;
-                TriOne.indices[1] = NE;
-                TriOne.indices[2] = SE;
+                TriOne.indices[1] = NW;
+                TriOne.indices[2] = NE;
+                TriOne.neighboursTriangles[0] = i < quadsPerSide-1 ? (currentQuad + quadsPerSide) * 2 + 1 : -1; // Are we now at the highest row?, find triangle above us, else -1 
+                TriOne.neighboursTriangles[1] = currentQuad * 2 + 1;
+                TriOne.neighboursTriangles[2] = j > 0 ? (currentQuad-1)*2 + 1 : -1;
                 FIndicesAndNeighbour TriTwo;
                 TriTwo.indices[0] = SW;
-                TriTwo.indices[1] = NW;
-                TriTwo.indices[2] = NE;
+                TriTwo.indices[1] = NE;
+                TriTwo.indices[2] = SE;
+                TriTwo.neighboursTriangles[0] = j < quadsPerSide - 1 ? (currentQuad+1)*2 : -1;
+                TriTwo.neighboursTriangles[1] = i > 0 ? (currentQuad - quadsPerSide)*2 : -1;
+                TriTwo.neighboursTriangles[2] = currentQuad * 2;
                 indicesAndNeighbours.push_back(TriOne);
                 indicesAndNeighbours.push_back(TriTwo);
-                std::cout << TriOne << std::endl;
-                std::cout << TriTwo << std::endl;
+                // std::cout << TriOne << std::endl;
+                // std::cout << TriTwo << std::endl;
+                std::cout << currentQuad << std::endl;
                 
             }
         }
