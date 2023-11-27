@@ -9,9 +9,9 @@ using UnityEditor;
 using UnityEngine;
 
 public class PointCloudRenderer : MonoBehaviour {
-    [SerializeField] private TextAsset pointCloudData;
-    [SerializeField] private Mesh _mesh;
-    [SerializeField] private Material _material;
+    [SerializeField] public TextAsset pointCloudData;
+    [SerializeField] public Mesh _mesh;
+    [SerializeField] public Material _material;
     GraphicsBuffer meshTriangles;
     GraphicsBuffer meshPositions;
     GraphicsBuffer vertexPositions;
@@ -98,8 +98,8 @@ public class PointCloudRenderer : MonoBehaviour {
         return lines.ToArray();
     }
     private List<Vector3> points = new();
-    void Start()
-    {
+
+    public void Initialize() {
         points = new List<Vector3>();
         // int a = 0;
         
@@ -111,7 +111,7 @@ public class PointCloudRenderer : MonoBehaviour {
                     continue;
                 skip++;
                 if (skip > 10) {
-                    continue;
+                    // continue;
                 }
 
                 skip = 0;
@@ -129,15 +129,23 @@ public class PointCloudRenderer : MonoBehaviour {
         vertexPositions = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _mesh.vertices.Length, 3 * sizeof(float));
         vertexPositions.SetData(_mesh.vertices);
     }
-
-    void OnDestroy()
+    void Start()
     {
+        Initialize();
+    }
+
+    public void Reinitialize() {
         meshTriangles?.Dispose();
         meshTriangles = null;
         meshPositions?.Dispose();
         meshPositions = null;
         vertexPositions?.Dispose();
         vertexPositions = null;
+    }
+
+    void OnDestroy()
+    {
+        Reinitialize();
     }
 
     void Update()

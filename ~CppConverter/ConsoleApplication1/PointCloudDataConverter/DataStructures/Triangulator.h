@@ -1,7 +1,10 @@
 ﻿#pragma once
+#include <fstream>
 #include <iostream>
+#include <string>
 #include <vector>
 
+#include "FIndicesAndNeighbour.h"
 #include "Range3.h"
 #include "Vector3.h"
 
@@ -17,11 +20,15 @@ private:
     // float lengthY;
     float stepLengthX;
     float stepLengthy;
+    float stepLengthZ;
     int numClouds;
     int partitions;
 
+    bool boundsDirty = true;
+
 public:
-    Triangulator(std::vector<Vector3>& points, int partitions) {
+    Triangulator(std::vector<Vector3>& points, int partitions)
+    {
         // Calculate some starting values
         // std::cout << "yMax " << yMax << " yMin " << yMin << " xMax " << xMax << " xMin " << xMin << std::endl;
         _pointCloud = points;
@@ -33,19 +40,45 @@ public:
         // lengthY = 
         stepLengthX = bounds.LengthX() / static_cast<float>(partitions);
         stepLengthy = bounds.LengthY() / static_cast<float>(partitions);
+        stepLengthZ = bounds.LengthZ() / static_cast<float>(partitions);
         numClouds = partitions * partitions;
         this->partitions = partitions;
     }
 
-    void CenterPointCloud() {
+    Vector3 GetOffsetVector() const
+    {
+        return Vector3(bounds._max.x() + bounds._min.x(), bounds._max.y() + bounds._min.y(),
+                       bounds._max.z() + bounds._min.z()) / 2.0f;
+    }
+
+    void CenterPointCloud()
+    {
+        CalculateBounds();
         // Getting offset vector
-        // const Vector3 offset = Vector3(bounds.LengthX(), bounds.LengthY(), bounds.LengthZ()) / 2.f;
-        const Vector3 offset = _pointCloud[0];
+        const Vector3 offset = GetOffsetVector();
+        // const Vector3 offset = _pointCloud[0];
 
         for (Vector3& point : _pointCloud) {
             point -= offset;
             // point *= 0.05f;
         }
+        boundsDirty = true;
+    }
+
+    template <typename T>
+    void WriteToFile(const std::string filename, std::vector<T> items)
+    {
+        std::ofstream outFile(filename);
+        if (!outFile.is_open()) {
+            std::cout << "File could not be opened or created!\n";
+            return;
+        }
+        outFile << items.size();
+        for (auto item : items) {
+            // std::cout << point << std::endl;
+            outFile << "\n" << item;
+        }
+        outFile.close();
     }
 
     // 7 8 9
@@ -53,41 +86,85 @@ public:
     // 1 2 3    ^y ->x
     // pointClouds are written [x][y] index
 
-    void Triangulate() {
-        /*
-        std::vector<std::vector<std::vector<Vector3>>> pointClouds = SplitIntoSmallerClouds();
-#pragma omp parallel for
-        for (int i = 0; i < pointClouds.size(); ++i) {
-            std::cout << "Im : " << i << std::endl;
-            for (int j = 0; j < pointClouds[i].size(); ++j) {
-                std::cout << pointClouds[i][j].size() << std::endl;
-            }
-        }
-    */
-
+    void Triangulate()
+    {
         CalculateBounds();
-        std::vector<std::vector<Vector3>> pointClouds;
+        std::cout << bounds << std::endl;
+
         std::vector<float> heights = std::vector<float>(partitions * partitions);
+
+        std::vector<std::vector<Vector3>> pointClouds;
         SplitIntoSmallerClouds(pointClouds);
-#pragma omp parallel for collapse(2) // Dont reallocate ANYTHING, dont emplace back, dont push to shered memory
+
+        /*
+        // Print Data of SplitClouds
         for (int i = 0; i < pointClouds.size(); ++i) {
-            
-            const float size = pointClouds[i].size();
-            float average;
-            
+            std::vector<Vector3> test = std::vector<Vector3>(0);
             for (int j = 0; j < pointClouds[i].size(); ++j) {
-                average = pointClouds[i][j].y() / size;
+                test.push_back(pointClouds[i][j]);
+            }
+            WriteToFile("Test" + std::to_string(i) + ".txt", test);
+        }
+        return;
+        */
+
+        // #pragma omp parallel for collapse(2) // Dont reallocate ANYTHING, dont emplace back, dont push to shered memory
+        for (int i = 0; i < pointClouds.size(); ++i) {
+            const float size = pointClouds[i].size();
+            float average = 0;
+
+            for (int j = 0; j < pointClouds[i].size(); ++j) {
+                average += pointClouds[i][j].y() / size;
             }
             heights[i] = average;
+            // std::cout << heights[i] << std::endl;
         }
 
-        for (auto height : heights) {
-            std::cout << height << std::endl;
+        // for (auto height : heights) {
+        //     std::cout << height << std::endl;
+        // }
+
+        // Create the points, with correct xyz coordinates
+        std::vector<Vector3> trigPoints = std::vector<Vector3>(partitions * partitions);
+        const float stepX = (bounds.LengthX() - stepLengthX) / (partitions - 1);
+        const float stepZ = (bounds.LengthZ() - stepLengthZ) / (partitions - 1);
+        for (int i = 0; i < partitions * partitions; i++) {
+            Vector3 point = Vector3(stepX * static_cast<float>(i % partitions), heights[i],
+                                    stepZ * (float)static_cast<int>((float)i / (float)partitions));
+            trigPoints.push_back(point);
         }
+
+        // center this regular grid
+        const float xMin = 0;
+        const float xMax = stepX * static_cast<float>(partitions - 1);
+        const float zMin = 0;
+        const float zMax = stepZ * static_cast<float>(partitions - 1);
+
+        const Vector3 regularGridOffsetVector = Vector3(xMax + xMin, 0, zMax + zMin) / 2.0f;
+
+        for (Vector3& point : trigPoints) {
+            point -= regularGridOffsetVector;
+        }
+
+        // for (int i = 0; i < partitions; ++i) {
+        //     for (int j = 0; j < partitions; ++j) {
+        //             std::cout << heights[j + partitions * i] << " | ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+        WriteToFile("Vertices.txt", trigPoints);
+
+
+        // Write to structure
     }
 
 private:
-    void CalculateBounds() {
+    void CalculateBounds()
+    {
+        if (!boundsDirty)
+            return;
+
+        boundsDirty = false;
         // if (hasCalculatedBounds)
         // return;
 
@@ -111,9 +188,11 @@ private:
         }
 
         bounds = Range3(xMin, yMin, zMin, xMax, yMax, zMax);
+        // std::cout << bounds << std::endl;
     }
 
-    void SplitIntoSmallerClouds(std::vector<std::vector<Vector3>>& pointClouds) {
+    void SplitIntoSmallerClouds(std::vector<std::vector<Vector3>>& pointClouds)
+    {
         // void SplitIntoSmallerClouds(std::vector<std::vector<std::vector<Vector3>>>& pointClouds) {
         // pointClouds = std::vector<std::vector<std::vector<Vector3>>>(
         //     partitions, std::vector<std::vector<Vector3>>(partitions, std::vector<Vector3>(2 * 2)));
@@ -121,19 +200,19 @@ private:
         pointClouds = std::vector<std::vector<Vector3>>(partitions * partitions, std::vector<Vector3>(2));
         for (auto point : _pointCloud) {
             float relavtiveX = point.x() - bounds._min.x();
-            float relavtiveY = point.y() - bounds._min.y();
+            float relavtiveZ = point.z() - bounds._min.z();
             float fIndexX = (relavtiveX / bounds.LengthX()) * static_cast<float>(partitions);
-            float fIndexY = (relavtiveY / bounds.LengthY()) * static_cast<float>(partitions);
+            float fIndexZ = (relavtiveZ / bounds.LengthZ()) * static_cast<float>(partitions);
 
             int indexX = (int)fIndexX;
             indexX = std::max(0, indexX);
             indexX = std::min(partitions - 1, indexX);
-            int indexY = (int)fIndexY;
-            indexY = std::max(0, indexY);
-            indexY = std::min(partitions - 1, indexY);
+            int indexZ = (int)fIndexZ;
+            indexZ = std::max(0, indexZ);
+            indexZ = std::min(partitions - 1, indexZ);
 
             // std::cout << indexX << " | " << indexY << std::endl;
-            pointClouds[indexX + indexY * partitions].push_back(point);
+            pointClouds[indexX + indexZ * partitions].push_back(point);
             // pointClouds[indexX][indexY].push_back(point);
         }
     }

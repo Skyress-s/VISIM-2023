@@ -26,7 +26,10 @@ public:
         _max = Vector3(xMax, yMax, zMax);
     }
 
-    float LengthX() { return _max.x() - _min.x(); }
-    float LengthY() { return _max.y() - _min.y(); }
-    float LengthZ() { return _max.z() - _min.z(); }
+    float LengthX() const { return _max.x() - _min.x(); }
+    float LengthY() const { return _max.y() - _min.y(); }
+    float LengthZ() const { return _max.z() - _min.z(); }
+private:
+    friend std::ostream& operator<<(std::ostream&, const Range3&);
+    friend std::istream& operator>>(std::istream&, Range3&);
 };

@@ -162,12 +162,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataStructures\FIndicesAndNeighbour.cpp" />
     <ClCompile Include="DataStructures\Range3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DataStructures\Triangulator.cpp" />
     <ClCompile Include="DataStructures\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataStructures\FIndicesAndNeighbour.h" />
     <ClInclude Include="DataStructures\Range3.h" />
     <ClInclude Include="DataStructures\Triangulator.h" />
     <ClInclude Include="DataStructures\Vector3.h" />
