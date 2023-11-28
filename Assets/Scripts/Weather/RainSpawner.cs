@@ -32,7 +32,8 @@ namespace KT {
                 UnityEngine.Random.Range(-spawnVolumeSize.y, spawnVolumeSize.y),
                 UnityEngine.Random.Range(-spawnVolumeSize.z, spawnVolumeSize.z)
             ) / 2f;
-            Instantiate(raindropPrefab, spawnPos, Quaternion.identity);
+            Instantiate(raindropPrefab, spawnPos, Quaternion.identity).GetComponent<KT.Rigidbody>().TriangleSurface = GameObject.FindObjectOfType<TriangleSurface>();
+            
         }
     }
 }

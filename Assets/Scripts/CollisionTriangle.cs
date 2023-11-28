@@ -33,6 +33,7 @@ namespace KT {
             Vector3 cross = Vector3.Cross(yx, yz);
             // Area = cross.magnitude / 2f;
             Area = cross2d / 2f;
+            Area = cross2d;
             Normal = -cross.normalized;
         }
         public Vector3 x{get; private set;}
@@ -53,6 +54,37 @@ namespace KT {
 
             return true;
         }
+
+        public Vector3 GetDebugBarycCoordinates(Vector3 p) {
+             Vector3 X = x - p;
+             Vector3 Y = y - p;
+             Vector3 Z = z - p;
+ 
+             X = X.RemoveY();
+             Y = Y.RemoveY();
+             Z = Z.RemoveY();
+             
+             Debug.DrawRay(p.RemoveY(), X, Color.green);
+             Debug.DrawRay(p.RemoveY(), Y, Color.green);
+             Debug.DrawRay(p.RemoveY(), Z, Color.green);
+ 
+             float U = Vector3.Cross(Y, Z).y / Area;
+             float W = Vector3.Cross(X, Y).y / Area;
+             float V = Vector3.Cross(Z, X).y / Area;
+             return new Vector3(U, W, V);
+             
+             Vector3 xp = p - x;
+             Vector3 xy = y - x;
+             Vector3 xz = z - x;
+ 
+             float v = xz.x * xp.z - xz.z * xp.x;
+             v /= Area;
+             float w = xp.x * xy.z - xp.z * xy.x;
+             w /= Area;
+             float u = 1f - v - w;
+             
+             return new Vector3(u, v, w);           
+        }
         public Vector3 GetBarycCoordinates(Vector3 p) {
             Vector3 X = x - p;
             Vector3 Y = y - p;
@@ -69,7 +101,7 @@ namespace KT {
             float U = Vector3.Cross(Y, Z).y / Area;
             float W = Vector3.Cross(X, Y).y / Area;
             float V = Vector3.Cross(Z, X).y / Area;
-            return new Vector3(U, W, V);
+            return new Vector3(U, V, W);
             
             Vector3 xp = p - x;
             Vector3 xy = y - x;
