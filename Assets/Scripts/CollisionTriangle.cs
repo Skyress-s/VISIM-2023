@@ -31,7 +31,7 @@ namespace KT {
             Vector3 cross = Vector3.Cross(yx, yz);
             // Area = cross.magnitude / 2f;
             Area = cross2d / 2f;
-            Normal = cross.normalized;
+            Normal = -cross.normalized;
         }
         public Vector3 x{get; private set;}
         public Vector3 y{get; private set;}
