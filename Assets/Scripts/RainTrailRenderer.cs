@@ -9,7 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class RainTrailRenderer : MonoBehaviour {
     private LineRenderer _lr;
-    [SerializeField] private float tickPeriod = 1f;
+    [SerializeField] public float tickPeriod = 1f;
     
     Queue<Vector3> trailQueue = new Queue<Vector3>();
     [SerializeField] private int goalPoints = 100;

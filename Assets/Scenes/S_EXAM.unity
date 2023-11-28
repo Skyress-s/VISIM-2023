@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 513588022}
   - component: {fileID: 513588025}
   - component: {fileID: 513588024}
+  - component: {fileID: 513588026}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -158,8 +159,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <gravityScale>k__BackingField: 1
   TriangleSurface: {fileID: 1385444926}
-  ballradius: 0.5
-  falloff: 0.107
+  ballradius: 6.58
+  falloff: 0.712
   onCollision:
     m_PersistentCalls:
       m_Calls:
@@ -185,7 +186,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.83, y: 42.2, z: 5.56}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 12.323, y: 12.323, z: 12.323}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -370,6 +371,18 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &513588026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513588019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6316051b25c44a8db2f5a9d3baac4829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &638891722
 GameObject:
   m_ObjectHideFlags: 0
@@ -591,8 +604,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1041565142}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.088247456, y: 0.88172525, z: -0.18269302, w: 0.42590645}
-  m_LocalPosition: {x: -402.3736, y: 267.52777, z: 59.612663}
+  m_LocalRotation: {x: 0.23100008, y: -0.75717944, z: 0.3485426, w: 0.501833}
+  m_LocalPosition: {x: 384.624, y: 362.89444, z: 129.39992}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -791,8 +804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3760d1eeb46b8cb4cb3bfa3de68b3997, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticesData: {fileID: 4900000, guid: 337dfd75a622ad341bff6f62641b422a, type: 3}
-  indicesData: {fileID: 4900000, guid: 0fcb81004f9a0f44da8a6956572a4a30, type: 3}
+  verticesData: {fileID: 4900000, guid: 5c49144be6447754f99cde2de18705e0, type: 3}
+  indicesData: {fileID: 4900000, guid: 4b09b0842e8f8c24aa2296f322857b14, type: 3}
 --- !u!4 &1385444927
 Transform:
   m_ObjectHideFlags: 0
@@ -890,7 +903,7 @@ MonoBehaviour:
   raindropPrefab: {fileID: 5460787291772148831, guid: a4b3b02e150a3fc41b1d3e4944761104,
     type: 3}
   spawnVolumeSize: {x: 589.9, y: 5.19, z: 324.2}
-  spawnFrequency: 2.54
+  spawnFrequency: 9.51
 --- !u!4 &1410221515
 Transform:
   m_ObjectHideFlags: 0

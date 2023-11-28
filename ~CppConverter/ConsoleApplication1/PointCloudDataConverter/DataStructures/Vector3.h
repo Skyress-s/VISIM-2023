@@ -12,6 +12,16 @@ public:
     float y() const { return xyz[1]; }
     float z() const { return xyz[2]; }
 
+    
+    void x(const float& newValue) {xyz[0] = newValue; }
+    void y(const float& newValue) {xyz[1] = newValue; }
+    void z(const float& newValue) {xyz[2] = newValue; }
+
+    float Length()
+    {
+        return sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]);
+    }
+
     Vector3 operator+(const Vector3& rhs) const {
         return Vector3(xyz[0] + rhs.xyz[0], xyz[1] + rhs.xyz[1], xyz[2] + rhs.xyz[2]);
     }

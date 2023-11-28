@@ -126,7 +126,9 @@ public:
         // }
 
         // Create the points, with correct xyz coordinates
+        const float lengthX = bounds.LengthX() - stepLengthX;
         const float stepX = (bounds.LengthX() - stepLengthX) / (partitions - 1);
+        const float lengthY = bounds.LengthY() - stepLengthy;
         const float stepZ = (bounds.LengthZ() - stepLengthZ) / (partitions - 1);
         std::vector<Vector3> trigPoints = HeightIntoRegularGrid(heights, stepX, stepZ);
 
@@ -141,6 +143,18 @@ public:
         for (Vector3& point : trigPoints) {
             point -= regularGridOffsetVector;
         }
+
+
+        // MAKE IT SPHERICAL FOR TESTS TODO REMOVE!
+        for (Vector3& point : trigPoints) {
+            Vector3 center = Vector3(0, 0, 0);
+            
+            Vector3 pointToCenter = (point - center);
+            pointToCenter.y(0);
+            float distance = pointToCenter.Length();
+            point.xyz[1] = point.y() + distance / 20.f;
+        }
+        
 
         WriteToFile("Vertices.txt", trigPoints);
         // Calculate Triangle and neighbour info
@@ -184,7 +198,7 @@ public:
             }
         }
 
-        WriteToFile("indicesAndNeighbours.txt", indicesAndNeighbours);
+        WriteToFile("IndicesAndNeighbours.txt", indicesAndNeighbours);
 
         // Write to structure
     }
