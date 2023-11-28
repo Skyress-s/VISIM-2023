@@ -48,6 +48,7 @@ public class TriangleSurface : MonoBehaviour {
         return triangles;
     }
     private void OnDrawGizmos() {
+        return;
         List<CollisionTriangle> tris = GetTriangles();
         for (int i = 0; i < tris.Count; i++) {
             tris[i].DebugDraw(UnityEngine.Color.red);

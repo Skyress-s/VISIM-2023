@@ -31,7 +31,7 @@ namespace KT {
                 UnityEngine.Random.Range(-spawnVolumeSize.x, spawnVolumeSize.x),
                 UnityEngine.Random.Range(-spawnVolumeSize.y, spawnVolumeSize.y),
                 UnityEngine.Random.Range(-spawnVolumeSize.z, spawnVolumeSize.z)
-            );
+            ) / 2f;
             Instantiate(raindropPrefab, spawnPos, Quaternion.identity);
         }
     }
