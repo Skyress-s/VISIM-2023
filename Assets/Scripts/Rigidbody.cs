@@ -104,7 +104,7 @@ namespace KT {
             
             float distanceFromTrianglePlane = tri.DistanceFromTrianglePlane(ballPosition);
             distanceFromTrianglePlane = Mathf.Abs(distanceFromTrianglePlane);
-            Debug.Log(distanceFromTrianglePlane);
+            
             bool onPlane = distanceFromTrianglePlane < ballRadius;
             if (!onPlane || !inTriangle) {
                 hit = new TriangleCollisionHit();

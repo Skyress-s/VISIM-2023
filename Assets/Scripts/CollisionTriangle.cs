@@ -9,7 +9,9 @@ namespace KT {
         
         public float Area { get; private set; }
         public Vector3 Normal { get; private set; }
-
+        
+        public Vector3 Center => (x + y + z) / 3f;
+        
         public void DebugDraw(Color color) {
             Debug.DrawLine(x,y, color);
             Debug.DrawLine(z,y, color);

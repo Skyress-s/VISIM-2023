@@ -8,8 +8,8 @@ public class TriangleSurface : MonoBehaviour {
     [SerializeField] private TextAsset verticesData;
     [SerializeField] private TextAsset indicesData;
 
-    private List<Vector3> vertices  ;
-    private List<int> indices;
+    private List<Vector3> vertices = new() ;
+    private List<int> indices = new();
     private void Start() {
         vertices = new();
         indices = new();
@@ -30,9 +30,11 @@ public class TriangleSurface : MonoBehaviour {
     }
 
     public List<CollisionTriangle> GetTriangles() {
-        List<Vector3> vertices = new();
-        List<int> indices = new();
-        ReadData(ref vertices, ref indices);
+        if (vertices.Count == 0 || indices.Count == 0) {
+            vertices = new();
+            indices = new();
+            ReadData(ref vertices, ref indices);
+        }
 
         List<CollisionTriangle> triangles = new();
         for (int i = 0; i < indices.Count / 3; i++) {
