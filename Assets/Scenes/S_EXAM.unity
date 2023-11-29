@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 513588025}
   - component: {fileID: 513588024}
   - component: {fileID: 513588026}
+  - component: {fileID: 513588027}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -159,7 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <gravityScale>k__BackingField: 1
   TriangleSurface: {fileID: 1385444926}
-  ballradius: 6.58
+  <ballradius>k__BackingField: 6.36
   falloff: 0.712
   onCollision:
     m_PersistentCalls:
@@ -381,6 +382,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6316051b25c44a8db2f5a9d3baac4829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &513588027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513588019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2436a3411acc4dc5b4a32ec682d10ce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &638891722
@@ -901,7 +914,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1410221514
 MonoBehaviour:
   m_ObjectHideFlags: 0

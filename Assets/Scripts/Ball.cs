@@ -14,7 +14,7 @@ namespace KT {
 
         [FormerlySerializedAs("_collider")] [SerializeField] public TriangleSurface TriangleSurface;
 
-        [SerializeField] private float ballradius = 0.1f;
+        [field: SerializeField] public float ballradius { get; private set; } = 0.1f;
 
         [Tooltip("0,99 means almost no loss with happen, 0.01 means almost all velocity will be lost")]
         [Range(0.01f, 0.99f)] [SerializeField] private float falloff = 0.6f;

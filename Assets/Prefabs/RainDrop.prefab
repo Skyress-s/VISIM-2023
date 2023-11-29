@@ -146,7 +146,7 @@ LineRenderer:
         outWeight: 0.14163089
       - serializedVersion: 3
         time: 1
-        value: 0.17840332
+        value: 0.526792
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -209,8 +209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 781653e7a6134ad479b2632077ff85f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tickPeriod: 0.33
-  goalPoints: 10
+  tickPeriod: 0.3
+  goalPoints: 12
   spline:
     c: []
     t: []
