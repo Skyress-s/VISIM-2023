@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
+// TASK 2.2
 public class PointCloudRenderer : MonoBehaviour {
     [SerializeField] public TextAsset pointCloudData;
     [SerializeField] public Mesh _mesh;

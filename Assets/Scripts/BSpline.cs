@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace KT {
+    /// <summary>
+    /// BSpline implementation based on forelesningsnotater 7.7.
+    /// </summary>
+    
     [Serializable]
     public class BSpline {
 
@@ -14,40 +18,50 @@ namespace KT {
         private int minTValuesRequired => 2 * d + 2;
         public int MinPointsRequired => minTValuesRequired - d - 1; 
         
+        
+        
         public BSpline(int degree, List<Vector3> controlPoints) {
             d = degree;
             c = new( controlPoints);
 
             n = controlPoints.Count;
             
-            // Initalizing T Values
-	        // ------------------------------------------------------------------
-            t = new List<float>();
-            int totalTValues = d + n + 1;
+            // Set T Values
+            t = CalculateTValues(d,n);
+        }
+
+        public void Initialize() {
             
+        }
+
+        private static List<float> CalculateTValues(int d, int n) {
+            List<float >t = new List<float>();
+            int totalTValues = d + n + 1;
+
             // Start Values
-            for (int i = 0; i < d+1; i++) {
+            for (int i = 0; i < d + 1; i++) {
                 t.Add(0);
             }
 
             // Middle Values
             int numMiddlePoints = totalTValues - 2 * d - 2;
             for (int i = 0; i < numMiddlePoints; i++) {
-                t.Add(i+1);
+                t.Add(i + 1);
             }
 
             // End Values
-            for (int i = 0; i < d+1; i++) {
+            for (int i = 0; i < d + 1; i++) {
                 t.Add(numMiddlePoints + 1);
             }
-            
-            // Reparamatrizing t parameters : 0 -> totalTValues to 0 -> 1
+
+            // Reparamatrizing t parameters : 0 -> totalTValues to 0 -> 1 as its easier to use.
             for (int i = 0; i < t.Count; i++) {
-                t[i] = t[i] / (float)(numMiddlePoints+1);
+                t[i] = t[i] / (float)(numMiddlePoints + 1);
             }
-            
+
+            return t;
         }
-        
+
         /// <summary>
         /// Using De Boor's algorithm
         /// See Forelesningsnotater 7.7 Listing 7.5
@@ -74,7 +88,25 @@ namespace KT {
             }
             return a[0];
         }
+        /// <summary>
+        /// See Forelesningsnotater 7.7 Listing 7.4
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        private int FindKnowInterval(float x) {
+            int my = n - 1;
+            while (x < t[my] && my > d) {
+                my--;
+            }
 
+            return my;
+        }
+
+        /// <summary>
+        /// Helper function to evaluate the spline at a number of points.
+        /// </summary>
+        /// <param name="numberOfSamples"></param>
+        /// <returns></returns>
         public Vector3[] EvalueatePoints(int numberOfSamples) {
             
             Vector3[] points = new Vector3[numberOfSamples];
@@ -83,14 +115,6 @@ namespace KT {
             }
 
             return points;
-        }
-        private int FindKnowInterval(float x) {
-            int my = n - 1;
-            while (x < t[my] && my > d) {
-                my--;
-            }
-
-            return my;
         }
         
         

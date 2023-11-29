@@ -68,7 +68,7 @@ public:
 
     // Filename "test.txt" will result in file : test.txt 
     template <typename T>
-    void WriteToFile(const std::string filename, std::vector<T> items)
+    void WriteToFile(const std::string filename, const std::vector<T>& items) const
     {
         std::ofstream outFile(filename);
         if (!outFile.is_open()) {
@@ -145,6 +145,7 @@ public:
         }
 
 
+        /*
         // MAKE IT SPHERICAL FOR TESTS TODO REMOVE!
         for (Vector3& point : trigPoints) {
             Vector3 center = Vector3(0, 0, 0);
@@ -154,6 +155,7 @@ public:
             float distance = pointToCenter.Length();
             point.xyz[1] = point.y() + distance / 20.f;
         }
+        */
         
 
         WriteToFile("Vertices.txt", trigPoints);

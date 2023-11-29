@@ -13,7 +13,11 @@ public class RainTrailRenderer : MonoBehaviour {
     
     Queue<Vector3> trailQueue = new Queue<Vector3>();
     [SerializeField] private int goalPoints = 100;
+
+    public Vector3 StartPoint => transform.position;
+    public Vector3 MiddlePoint => trailQueue.Count >= 1 ? trailQueue.ElementAt( trailQueue.Count / 2) : transform.position;
     
+    public Vector3 EndPoint => trailQueue.Count >= 1 ? trailQueue.Last() : transform.position;
     
     private float tickTimer = 0f;
     
@@ -47,8 +51,10 @@ public class RainTrailRenderer : MonoBehaviour {
             UpdateSpline();
         }
 
-        
-        
+        Color color = _lr.startColor;
+        color = Color.Lerp(color, Color.white, Time.deltaTime * 10f);
+        _lr.startColor = _lr.endColor = color;
+
     }
 
     [ContextMenu("Tick")]

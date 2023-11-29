@@ -4,9 +4,12 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
+// TASK 2.4 - Reading in data and drawing
 public class TriangleSurface : MonoBehaviour {
     [SerializeField] private TextAsset verticesData;
     [SerializeField] private TextAsset indicesData;
+
+    [SerializeField] private bool bDrawDebug = false;
 
     private List<Vector3> vertices = new() ;
     private List<int> indices = new();
@@ -29,26 +32,29 @@ public class TriangleSurface : MonoBehaviour {
         _renderer = GetComponent<Renderer>();
         
         
-        
+        // Make sure to reset data when starting, as we dont reload our domain when we start the game.
         vertices = new();
         indices = new();
         ReadData(ref vertices, ref indices);
-
-        // for (int i = 0; i < indices.Count/3; i++) {
-        // int temp = indices[i * 3 + 0];
-        // indices[i * 3 + 0] = indices[i * 3 + 2];
-        // indices[i * 3 + 2] = temp;
-        // }
         
+        // Create mesh from Data
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = indices.ToArray();
         
+        // Make sure Normals are in order
         mesh.RecalculateNormals();
+        
+        // Set the mesh in Unity on connected GameObject
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
-    public int GetQuadsPerSide() {
+    /// <summary>
+    /// Helper function to get the number of quads per side.
+    /// The calculation program always gives the vertices in order of x coordinate ascending, so we can use this to find the number of quads per side.
+    /// </summary>
+    /// <returns></returns>
+    public int GetNumQuadsPerSide() {
         int quadsPerSide = 0;
         while (vertices[quadsPerSide+1].x > vertices[quadsPerSide].x) { // The calculation program always gives the vertices in order of x coordinate ascending, so we can use this to find the number of quads per side.
             quadsPerSide++;
@@ -56,8 +62,14 @@ public class TriangleSurface : MonoBehaviour {
 
         return quadsPerSide;
     }
+    
+    /// <summary>
+    /// Using QuadsPerSide to find the triangle we are in. If outside triangulation area, return null.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
     public CollisionTriangle? GetTriangleFromPosition(Vector3 position) {
-        int quadsPerSide = GetQuadsPerSide(); // Is Valid for both x and z directions as they have the same amount of quads
+        int quadsPerSide = GetNumQuadsPerSide(); // Is Valid for both x and z directions as they have the same amount of quads
 
         var bounds = _renderer.bounds;
         
@@ -103,8 +115,14 @@ public class TriangleSurface : MonoBehaviour {
         return null;
     }
     
-    public List<CollisionTriangle> GetTriangles() {
-        if (vertices.Count == 0 || indices.Count == 0) {
+    /// <summary>
+    /// Return all triangles
+    /// If program thinks we have alleready initialzed vertices and indices dont read them in again.
+    /// </summary>
+    /// <param name="bForceUpdate">Force to readItems again. Useful for code that only runs EditTime</param>
+    /// <returns></returns>
+    public List<CollisionTriangle> GetTriangles(bool bForceUpdate = false) {
+        if (bForceUpdate || vertices.Count == 0 || indices.Count == 0) {
             vertices = new();
             indices = new();
             ReadData(ref vertices, ref indices);
@@ -122,28 +140,32 @@ public class TriangleSurface : MonoBehaviour {
         return triangles;
     }
     private void OnDrawGizmos() {
-        return;
-        List<CollisionTriangle> tris = GetTriangles();
+        if (!bDrawDebug) 
+            return;
+        
+        List<CollisionTriangle> tris = GetTriangles(true);
         for (int i = 0; i < tris.Count; i++) {
             tris[i].DebugDraw(UnityEngine.Color.red);
         }
     }
 
+    /// <summary>
+    /// Reads in vertices and indices from text files.
+    /// </summary>
+    /// <param name="verts"></param>
+    /// <param name="indices"></param>
     void ReadData(ref List<Vector3> verts, ref List<int> indices) {
         var vertStringData = verticesData.text.Split('\n');
         int numVerts = int.Parse(vertStringData[0]);
-        // Debug.Log($"Num Verts {numVerts}");
         
         for (int i = 1; i < numVerts + 1; i++) {
             var compData = vertStringData[i].Split(' ');
             verts.Add(new Vector3(float.Parse(compData[0]),float.Parse(compData[1]), float.Parse(compData[2]) ));
-            // verts[verts.Count - 1] *= 0.01f;
         }
         
         var indicesStringData =indicesData.text.Split('\n');
         int NumIndices = int.Parse(indicesStringData[0]);
         
-        // List<int> indices = new();
         for (int i = 1; i < NumIndices + 1; i++) {
             var compData = indicesStringData[i].Split(' ');
             indices.Add(int.Parse(compData[0]));
@@ -151,10 +173,4 @@ public class TriangleSurface : MonoBehaviour {
             indices.Add(int.Parse(compData[2]));
         }
     }
-
-    // public int GetTriangleFromPosition(Vector3 position) {
-    //     
-    // }
-    //
-    // public 
 }
