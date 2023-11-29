@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace KT {
+    // TASK 3.3
+    
     /// <summary>
     /// BSpline implementation based on forelesningsnotater 7.7.
     /// </summary>

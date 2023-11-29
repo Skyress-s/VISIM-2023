@@ -36,7 +36,7 @@ namespace KT {
             velocity = setVelocity;
         }
 
-        private void Update() {
+        virtual protected void Update() {
             Vector3 velBefore = velocity;
             velocity += Time.deltaTime * Vector3.down * 9.81f * gravityScale;
             transform.position += velocity * Time.deltaTime;

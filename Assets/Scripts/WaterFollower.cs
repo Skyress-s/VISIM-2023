@@ -8,10 +8,12 @@ namespace KT {
     [RequireComponent(typeof(Ball))]
     public class WaterFollower : MonoBehaviour {
         private Ball _ball;
+        private MeshRenderer _renderer;
 
 
         private void Awake() {
             _ball = GetComponent<Ball>();
+            _renderer = GetComponent<MeshRenderer>();
         }
         float k_dragRadius = 4f * 4f;
         private void Update() {
@@ -23,9 +25,25 @@ namespace KT {
                 float d2 = VectorExtensions.SqrDistanceXZ(x.RainTrailRenderer.MiddlePoint, transform.position);
                 float d3 = VectorExtensions.SqrDistanceXZ(x.RainTrailRenderer.EndPoint, transform.position);
                 
-                Debug.DrawRay(x.RainTrailRenderer.StartPoint, Vector3.up, Color.red);
-                Debug.DrawRay(x.RainTrailRenderer.MiddlePoint, Vector3.up, Color.red);
-                Debug.DrawRay(x.RainTrailRenderer.EndPoint, Vector3.up, Color.red);
+                // Debug.DrawRay(x.RainTrailRenderer.StartPoint, Vector3.up, Color.red);
+                // Debug.DrawRay(x.RainTrailRenderer.MiddlePoint, Vector3.up, Color.red);
+                // Debug.DrawRay(x.RainTrailRenderer.EndPoint, Vector3.up, Color.red);
+                LineRenderer lr = x.GetComponent<LineRenderer>();
+                // Debug.DrawLine(lr.bounds.min, lr.bounds.max);
+                // Vector3 evaluatePosition = transform.position;
+                // evaluatePosition.y = lr.bounds.center.y;
+                if (lr.bounds.Intersects(_renderer.bounds)) {
+                    Color color = lr.startColor;
+                    color.b = 1f;
+                    lr.startColor = lr.endColor = color;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+                
+                    
+                
                 
                 const float k_detectionDragRadius = 12f * 12f;
                 if (d1 < k_detectionDragRadius || d2 < k_detectionDragRadius || d3 < k_detectionDragRadius) {
@@ -42,15 +60,12 @@ namespace KT {
                 Vector3[] pos = new Vector3[lr.positionCount];
                 lr.GetPositions(pos);
                 
-                
-                // StartCoroutine(DisableColor(lr, 0.1f));
-                
-
                 for (int i = 0; i < pos.Length / 2; i++) {
                     Vector3 from = transform.position;
                     Vector3 to = pos[i*2];
-                    float sqrDistance = Vector2.SqrMagnitude(new Vector2(from.x, from.z) - new Vector2(to.x, to.z));
-                    if (sqrDistance < 4f * 4f) {
+                    float sqrDistance = VectorExtensions.SqrDistanceXZ(from, to);
+                    // float sqrDistance = Vector2.SqrMagnitude(new Vector2(from.x, from.z) - new Vector2(to.x, to.z));
+                    if (sqrDistance < 7f * 7f) {
                         Vector3 dir = (pos[i*2+1] - pos[i*2]) / ball.GetComponent<RainTrailRenderer>().tickPeriod;
                         // Vector3 c1 = Vector3.Cross(dir, _ball.velocity);
                         // Vector3 c2 = Vector3.Cross(dir, c1);
@@ -60,8 +75,9 @@ namespace KT {
                         if (_ball.velocity.sqrMagnitude < dir.sqrMagnitude * 2 || Vector3.Dot(_ball.velocity.normalized, dir.normalized) < 0f) {
 
                             _ball.velocity += dir * Time.deltaTime * 30f;
-                            lr.startColor = Color.red;
-                            lr.endColor = Color.red;
+                            Color color = lr.startColor;
+                            color.r = 1f;
+                            lr.startColor = lr.endColor = color;
                         }
                         break; // only one effect run per raindrop
                     }

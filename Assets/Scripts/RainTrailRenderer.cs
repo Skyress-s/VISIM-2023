@@ -5,7 +5,7 @@ using System.Linq;
 using KT;
 using UnityEngine;
 
-
+// TASK 3.3 TASK 3.4
 [RequireComponent(typeof(LineRenderer))]
 public class RainTrailRenderer : MonoBehaviour {
     private LineRenderer _lr;
@@ -52,7 +52,9 @@ public class RainTrailRenderer : MonoBehaviour {
         }
 
         Color color = _lr.startColor;
-        color = Color.Lerp(color, Color.white, Time.deltaTime * 10f);
+        Color targetColor = Color.white;
+        targetColor.r = targetColor.g = targetColor.b = 0.5f;
+        color = Color.Lerp(color, targetColor, Time.deltaTime * 10f);
         _lr.startColor = _lr.endColor = color;
 
     }
@@ -70,7 +72,7 @@ public class RainTrailRenderer : MonoBehaviour {
         if (spline.n < spline.MinPointsRequired) 
             return;
         
-        
+        // TASK 3.3 Lift spline (y) coordiante up to triangle surface
         Vector3[] positions = spline.EvalueatePoints(100);
         TriangleSurface triangleSurface = TriangleSurface.Instance;
         // Flatten points, and read y value From triangle surface.

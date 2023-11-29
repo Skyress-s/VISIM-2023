@@ -635,7 +635,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -819,6 +819,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   verticesData: {fileID: 4900000, guid: 5c49144be6447754f99cde2de18705e0, type: 3}
   indicesData: {fileID: 4900000, guid: 4b09b0842e8f8c24aa2296f322857b14, type: 3}
+  bDrawDebug: 0
 --- !u!4 &1385444927
 Transform:
   m_ObjectHideFlags: 0
@@ -916,7 +917,7 @@ MonoBehaviour:
   raindropPrefab: {fileID: 5460787291772148831, guid: a4b3b02e150a3fc41b1d3e4944761104,
     type: 3}
   spawnVolumeSize: {x: 589.9, y: 5.19, z: 324.2}
-  spawnFrequency: 9.51
+  spawnFrequency: 10
 --- !u!4 &1410221515
 Transform:
   m_ObjectHideFlags: 0
