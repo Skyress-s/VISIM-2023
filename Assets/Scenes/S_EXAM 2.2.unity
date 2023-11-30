@@ -159,7 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <gravityScale>k__BackingField: 1
   TriangleSurface: {fileID: 1385444926}
-  ballradius: 6.58
+  <ballradius>k__BackingField: 0.1
   falloff: 0.712
   onCollision:
     m_PersistentCalls:
@@ -668,6 +668,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e382f71f2be4461a2522ecf956c1cd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1133029939
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1133029941}
+  - component: {fileID: 1133029940}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1133029940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133029939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 650879d6ee9961049a669c4879cac3f5, type: 2}
+--- !u!4 &1133029941
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133029939}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -152.3919, y: -3.5763607, z: 8.013188}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1373112757
 GameObject:
   m_ObjectHideFlags: 0
@@ -819,6 +868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   verticesData: {fileID: 4900000, guid: 5c49144be6447754f99cde2de18705e0, type: 3}
   indicesData: {fileID: 4900000, guid: 4b09b0842e8f8c24aa2296f322857b14, type: 3}
+  bDrawDebug: 0
 --- !u!4 &1385444927
 Transform:
   m_ObjectHideFlags: 0
@@ -1039,3 +1089,4 @@ SceneRoots:
   - {fileID: 513588021}
   - {fileID: 638891724}
   - {fileID: 1410221515}
+  - {fileID: 1133029941}
