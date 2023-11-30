@@ -103,7 +103,7 @@ public:
     void Triangulate()
     {
         CalculateBounds();
-        std::cout << bounds << std::endl;
+        // std::cout << bounds << std::endl;
 
         std::vector<float> heights = std::vector<float>(partitions * partitions);
 
@@ -145,22 +145,9 @@ public:
         }
 
 
-        /*
-        // MAKE IT SPHERICAL FOR TESTS TODO REMOVE!
-        for (Vector3& point : trigPoints) {
-            Vector3 center = Vector3(0, 0, 0);
-            
-            Vector3 pointToCenter = (point - center);
-            pointToCenter.y(0);
-            float distance = pointToCenter.Length();
-            point.xyz[1] = point.y() + distance / 20.f;
-        }
-        */
-        
-
         WriteToFile("Vertices.txt", trigPoints);
-        // Calculate Triangle and neighbour info
 
+        // Calculate Triangle and neighbour info
         const int pointPerSide = partitions;
         const int quadsPerSide = partitions-1;
         const int totalNumQuads = quadsPerSide * quadsPerSide;
@@ -193,9 +180,7 @@ public:
                 TriTwo.neighboursTriangles[2] = currentQuad * 2;
                 indicesAndNeighbours.push_back(TriOne);
                 indicesAndNeighbours.push_back(TriTwo);
-                // std::cout << TriOne << std::endl;
-                // std::cout << TriTwo << std::endl;
-                std::cout << currentQuad << std::endl;
+                // std::cout << currentQuad << std::endl;
                 
             }
         }
