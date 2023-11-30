@@ -65,7 +65,10 @@ public class RainTrailRenderer : MonoBehaviour {
         if (trailQueue.Count > goalPoints) {
             trailQueue.Dequeue();
         }
-        spline = new BSpline(2, trailQueue.ToList());
+
+        var list = trailQueue.ToList();
+        // list.Add(transform.position);
+        spline = new BSpline(2, list);
     }
     
     private void UpdateSpline() {
@@ -77,7 +80,7 @@ public class RainTrailRenderer : MonoBehaviour {
         TriangleSurface triangleSurface = TriangleSurface.Instance;
         // Flatten points, and read y value From triangle surface.
         for (int i = 0; i < positions.Length; i++) {
-            positions[i].y = 0; // Flatten
+            // positions[i].y = 0; // Flatten
 
             CollisionTriangle? triangle =  triangleSurface.GetTriangleFromPosition(positions[i]);
             if (triangle == null) {
@@ -86,7 +89,7 @@ public class RainTrailRenderer : MonoBehaviour {
 
             CollisionTriangle tri = (CollisionTriangle)triangle;
             Vector3 baryc = tri.GetBarycCoordinates(positions[i]);
-            positions[i] = (tri.x * baryc.x + tri.y * baryc.y + tri.z * baryc.z);
+            positions[i] = (tri.x * baryc.x + tri.y * baryc.y + tri.z * baryc.z) + tri.Normal * 0.3f;
         }
         _lr.positionCount = positions.Length;
         _lr.SetPositions(positions);
