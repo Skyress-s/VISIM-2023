@@ -25,12 +25,7 @@ public class BallPlacer : MonoBehaviour {
         foreach (var collisionTriangle in triangles) {
             if (Intersect(collisionTriangle.x, collisionTriangle.y, collisionTriangle.z, ray)) {
                 // Place a ball at location
-                Instantiate(ballPrefab, collisionTriangle.Center + collisionTriangle.Normal, Quaternion.identity);
-                /*
-                    Debug.DrawLine(collisionTriangle.x, collisionTriangle.y, Color.green, 5f);
-                    Debug.DrawLine(collisionTriangle.y, collisionTriangle.z, Color.green, 5f);
-                    Debug.DrawLine(collisionTriangle.x, collisionTriangle.z, Color.green, 5f);
-                    */
+                Instantiate(ballPrefab, collisionTriangle.Center + collisionTriangle.Normal, Quaternion.identity).SetActive(true);
             }
         }
     }
